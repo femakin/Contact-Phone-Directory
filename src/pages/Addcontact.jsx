@@ -35,19 +35,20 @@ function Addcontact() {
     });
 
     const handleSubmit = (e) => {
+        setloading(true)
         const file = fileInput.current.files[0];
         e.preventDefault();
-        console.log(
-            firstName,
-            "firstname",
-            lastName,
-            phoneNumber,
-            location,
-            email,
-            imageUrl,
-            imageUrl,
-            file
-        );
+        // console.log(
+        //     firstName,
+        //     "firstname",
+        //     lastName,
+        //     phoneNumber,
+        //     location,
+        //     email,
+        //     imageUrl,
+        //     imageUrl,
+        //     file
+        // );
 
         const fileName = generateRandom(4);
         var formdata = new FormData();
@@ -69,9 +70,10 @@ function Addcontact() {
             .then(async (result) => {
                 // const UserDetails = JSON.parse(localStorage?.getItem('user_id'))
 
-                console.log(result, "resultttt");
+                // console.log(result, "resultttt");
 
                 if (result?.secure_url !== " ") {
+                    setloading(false)
                     const spaceId = "187484";
                     const accessToken = "rGrunKNU32hha77QQKkdfgtt";
 
@@ -104,15 +106,15 @@ function Addcontact() {
 
                     var raw = JSON.stringify({
                         "story": {
-                            "name": "ContactForm",
-                            "slug": "Contactform",
+                            "name": fileName,
+                            "slug": fileName,
                             "content": {
                                 "imagetwo": result?.secure_url,
                                 "location": location,
                                 "component": "ContactForm",
                                 "image_one": result?.secure_url,
-                                "last_name": lastName,
-                                "first_name": firstName,
+                                "last_name": lastName.toLowerCase(),
+                                "first_name": firstName.toLowerCase(),
                                 "phone_number": phoneNumber,
                                 "email_address": email,
                                 "body": []
@@ -131,12 +133,13 @@ function Addcontact() {
                     fetch(`https://mapi.storyblok.com/v1/spaces/187484/stories/`, requestOptions)
                         .then((res) => {
                             res.json()
-                        })
-                        .then((result) => {
-                            console.log(result, 'resultttt')
+                            // console.log(res.json(), 'resss')
+                        }).then((res) => {
+                            console.log(res, 'res')
                             navigate('/')
-                        })
-                        .catch(error => console.log('error', error));
+                        }).catch((err) => {
+                            console.log(err)
+                        });
 
 
                 }
@@ -233,7 +236,8 @@ function Addcontact() {
 
                             <div className="submit_container">
                                 <div className="submit_btn">
-                                    <input className="btn_" type="submit" value="Submit" />
+                                    {/* <input className="btn_" type="submit" value="Submit" /> */}
+                                    <input className="btn_" type="submit" value={`${loading ? 'loading...' : 'Submit'}`} />
                                 </div>
                             </div>
                         </div>

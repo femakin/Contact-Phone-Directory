@@ -39,6 +39,7 @@ function EditPage() {
 
 
     const handleSubmit = (e) => {
+        setloading(true)
         const file = fileInput.current.files[0];
         e.preventDefault();
         // console.log(
@@ -76,6 +77,7 @@ function EditPage() {
                 console.log(result, "resultttt");
 
                 if (result?.secure_url !== " ") {
+                    setloading(false)
                     const spaceId = "187484";
                     const accessToken = "rGrunKNU32hha77QQKkdfgtt";
 
@@ -108,15 +110,15 @@ function EditPage() {
 
                     var raw = JSON.stringify({
                         "story": {
-                            "name": "ContactForm",
-                            "slug": "Contactform",
+                            "name": fileName + lastName,
+                            "slug": fileName + lastName,
                             "content": {
                                 "imagetwo": result?.secure_url,
                                 "location": location,
                                 "component": "ContactForm",
                                 "image_one": result?.secure_url,
-                                "last_name": lastName,
-                                "first_name": firstName,
+                                "last_name": lastName.toLowerCase(),
+                                "first_name": firstName.toLowerCase(),
                                 "phone_number": phoneNumber,
                                 "email_address": email,
                                 "body": []
@@ -260,7 +262,7 @@ function EditPage() {
 
                             <div className="submit_container">
                                 <div className="submit_btn">
-                                    <input className="btn_" type="submit" value="Submit" />
+                                    <input className="btn_" type="submit" value={`${loading ? 'loading...' : 'Submit'}`} />
                                 </div>
                             </div>
                         </div>

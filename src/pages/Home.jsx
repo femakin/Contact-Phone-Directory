@@ -3,92 +3,121 @@ import "../styles/Home.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import StoryblokClient from "storyblok-js-client";
-import { FiEdit } from 'react-icons/fi';
-import { MdDeleteOutline } from 'react-icons/md'
-import { MdClear } from 'react-icons/md'
+import { FiEdit } from "react-icons/fi";
+import { MdDeleteOutline } from "react-icons/md";
+import { MdClear } from "react-icons/md";
+import Swal from "sweetalert2";
+import { queries } from "@testing-library/react";
 
 export default function Home() {
-    const Data = [
-        {
-            first_name: "Femi Tosin",
-            last_name: "TosinLove",
-            phone_number: "+2347037495325",
-            email_address: "akinfemi46@gmail.com",
-            location: "Nigeria",
-            img: "https://a.storyblok.com/f/187484/350x782/2ac6c8ea01/whatsapp-image-2022-11-07-at-6-21-20-am.jpeg",
-        },
-        {
-            first_name: "Femi Tosin",
-            phone_number: "+2347037495325",
-            email_address: "akinfemi46@gmail.com",
-            location: "Nigeria",
-            img: "https://a.storyblok.com/f/187484/350x782/2ac6c8ea01/whatsapp-image-2022-11-07-at-6-21-20-am.jpeg",
-        },
-
-
-
-    ];
-
     const navigate = useNavigate();
 
     const [stories, getStories] = useState();
     const [stories2, getStories2] = useState();
-    const [searchquery, setSearchqury] = useState("")
-
+    const [searchquery, setSearchqury] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [deletecontact, setDeleteContact] = useState(false);
 
     const HandleEdit = (data) => {
-        navigate('/editpage', {
-            state: data
-        })
+        navigate("/editpage", {
+            state: data,
+        });
+    };
 
+
+
+    const stageOne = (data) => {
+        console.log(data, 'dataaaa')
+
+        if (deletecontact) {
+            // alert('Confirm you want to delete')
+            Swal.fire({
+                title: "Delete!",
+                text: "Do you want to delete",
+                icon: "error",
+                confirmButtonText: "Cool",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    handleDelete(data)
+                }
+            })
+        }
     }
-
 
 
     const handleDelete = (data) => {
-
-
+        console.log(data, 'data')
         var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Xh2EhgBpDto1tHct8qGEDAtt-139200-CCGF4UwNMnQ9x3pDk7NJ");
+        myHeaders.append(
+            "Authorization",
+            "Xh2EhgBpDto1tHct8qGEDAtt-139200-CCGF4UwNMnQ9x3pDk7NJ"
+        );
 
         var requestOptions = {
-            method: 'DELETE',
+            method: "DELETE",
             headers: myHeaders,
-            redirect: 'follow'
+            redirect: "follow",
         };
 
-        fetch(`https://mapi.storyblok.com/v1/spaces/187484/stories/${data}`, requestOptions)
-            .then(response => response.text())
+        fetch(
+            `https://mapi.storyblok.com/v1/spaces/187484/stories/${data}`,
+            requestOptions
+        )
+            .then((response) => response.json())
             .then((result) => {
-                window.location.reload()
+                console.log(result, "resulttttttt");
+                window.location.reload();
             })
-            .catch(error => console.log('error', error));
+            .catch((error) => console.log("error", error));
+    };
 
+    // if (deletecontact) {
+    //     // alert('Confirm you want to delete')
+    //     Swal.fire({
+    //         title: "Delete!",
+    //         text: "Do you want to delete",
+    //         icon: "error",
+    //         confirmButtonText: "Cool",
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             handleDelete()
+    //         }
+    //     })
+    // }
 
-
-
-    }
-
-    const [refresh, setrefresh] = useState(false)
+    const [refresh, setrefresh] = useState(false);
+    const [afterclear, setafterclear] = useState(false)
 
     const handleSearchForm = (e) => {
-        e.preventDefault()
-        console.log(searchquery, 'searchquery')
-        console.log(stories, 'stories')
-        console.log(stories?.filter(x => x?.content?.first_name?.includes(searchquery)), 'searchquery')
-        getStories(stories?.filter(x => x?.content?.first_name?.includes(searchquery)))
-        // getStories2(stories)
-        setrefresh(!refresh)
-    }
-
+        e.preventDefault();
+        console.log(searchquery, "searchquery");
+        console.log(stories, "stories");
+        console.log(
+            stories?.filter((x) => x?.content?.first_name?.includes(searchquery)),
+            "searchquery"
+        );
+        getStories(
+            stories?.filter((x) =>
+                x?.content?.first_name?.includes(searchquery.toLocaleLowerCase())
+            )
+        );
+        getStories2(stories?.filter((x) =>
+            x?.content?.first_name?.includes(searchquery.toLocaleLowerCase())
+        ))
+        setrefresh(!refresh);
+    };
 
     const handleClearSearch = (e) => {
-        getStories(stories2)
-        setSearchqury('')
-    }
+        getStories(stories2);
+        setSearchqury("");
+        console.log(stories, 'sto')
+        setafterclear(true)
+    };
 
 
-    useEffect(() => {
+    const FetchData = () => {
+        // setLoading(true);
+
         const Storyblok = new StoryblokClient({
             accessToken: "rGrunKNU32hha77QQKkdfgtt",
             //   accessToken: 'Xh2EhgBpDto1tHct8qGEDAtt-139200-CCGF4UwNMnQ9x3pDk7NJ',
@@ -102,143 +131,158 @@ export default function Home() {
             version: "published",
         })
             .then((response) => {
-                console.log(response, '1');
-                getStories(response?.data?.stories)
-                getStories2(response?.data?.stories)
+                console.log(response?.data?.stories, "1");
+                getStories(response?.data?.stories);
+                setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
             });
+    }
 
 
 
+    useEffect(() => {
+        // setDeleteContact(false)
+        // FetchData()
+        setLoading(true);
+        const timer = setTimeout(() => {
+            FetchData()
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, [deletecontact, afterclear]);
 
 
-
-
-
-        // // use the universal js client to perform the request
-        // Storyblok.get('cdn/stories/', {
-        //     "starts_with": "stories/",
-        //     "filter_query": {
-        //         "content": {
-        //             "in": "Tosin"
-        //         }
-        //     }
-        // })
-        //     .then(response => {
-        //         console.log(response, 2)
-        //     }).catch(error => {
-        //         console.log(error)
-        //     })
-
-
-        Storyblok.get('cdn/stories/', {
-            "starts_with": "posts/",
-            "filter_query": {
-                "content": {
-                    "is": "Tosin"
-                }
-            }
-        })
-            .then(response => {
-                console.log(response, 2)
-            }).catch(error => {
-                console.log(error)
-            })
-
-
-
-    }, []);
+    const handleNavigate = () => {
+        navigate("/")
+        // getStories(stories2)
+    }
 
     return (
         <div className="main_body">
+            {
 
+                loading ? <div style={{
+                    textAlign: 'center'
+                }} >Loading...</div> :
+                    <div className="main_">
+                        <div className="contactandform">
+                            <div>
+                                <h1 className="title_text" onClick={() => handleNavigate()}>
+                                    All Contacts
+                                </h1>
+                            </div>
 
-
-
-            <div className="main_"  >
-
-
-
-
-
-                <div className="contactandform">
-                    <div>
-                        <h1 className="title_text" onClick={() => navigate("/")}>All Contacts</h1>
-                    </div>
-
-                    <div>
-                        <h1 className="title_text" onClick={() => navigate("/addcontact")}>
-                            Add Contact
-                        </h1>
-                    </div>
-                </div>
-
-
-
-                <div className="search_input_btn">
-
-                    <form onSubmit={handleSearchForm}  >
-                        <div className="search_input">
-                            <input required className="searchinput" value={searchquery} onChange={(e) => setSearchqury(e.target.value)} type="text" placeholder="Search for contact..." />
-                            {/* <button>Search</button> */}
-                            <input className="btn_" type="submit" value="Search" />
-                            {/* <input className="btn_" type="submit" value="Search" /> */}
-                            <MdClear onClick={() => handleClearSearch()} className="mdclear" />
+                            <div>
+                                <h1
+                                    className="title_text"
+                                    onClick={() => navigate("/addcontact")}
+                                >
+                                    Add Contact
+                                </h1>
+                            </div>
                         </div>
-                    </form>
 
-                </div>
+                        <div className="search_input_btn">
+                            <form onSubmit={handleSearchForm}>
+                                <div className="search_input">
+                                    <input
+                                        required
+                                        className="searchinput"
+                                        value={searchquery}
+                                        onChange={(e) => setSearchqury(e.target.value)}
+                                        type="text"
+                                        placeholder="Search for contact..."
+                                    />
 
+                                    <input className="btn_" type="submit" value="Search" />
 
-                <div className="main_conatiner">
-
-                    {
-                        stories?.map((x, i) => {
-                            return (
-                                <div key={i} className="img_others">
-
-                                    <div className="imganddetails"  >
-                                        <div className="img_body">
-                                            {" "}
-                                            <img src={x?.content?.imagetwo} alt={x?.content?.first_name} />{" "}
-                                        </div>
-                                        <div className="other_contents">
-                                            <div>
-                                                <div>
-                                                    <p className="firstname">{x?.content?.first_name}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="phone_num">{x?.content?.phone_number}</p>
-                                                </div>
-                                            </div>
-
-
-
-
-                                        </div>
-
-                                    </div>
-
-                                    <div className="edit_delete_container"  >
-                                        <div onClick={() => HandleEdit(x)}  >
-                                            <p className="firstname">  <FiEdit /></p>
-
-                                        </div>
-                                        <div onClick={() => handleDelete(x?.id)}>
-                                            <p className="phone_num">   <MdDeleteOutline /></p>
-
-                                        </div>
-                                    </div>
+                                    <MdClear
+                                        onClick={() => handleClearSearch()}
+                                        className="mdclear"
+                                    />
                                 </div>
-                            );
-                        })
+                            </form>
+                        </div>
 
-                    }
+                        <div className="main_conatiner">
+                            {stories?.map((x, i) => {
+                                return (
+                                    <div key={i} className="img_others">
 
-                </div>
-            </div>
-        </div>
+                                        {
+                                            // loading ? <div style={{
+                                            //     textAlign: 'center'
+                                            // }} >Loading...</div> :
+
+                                            <>
+
+                                                <div className="imganddetails">
+                                                    <div className="img_body">
+                                                        {" "}
+                                                        <img
+                                                            src={x?.content?.imagetwo}
+                                                            alt={x?.content?.first_name}
+                                                        />{" "}
+                                                    </div>
+                                                    <div className="other_contents">
+                                                        <div>
+                                                            <div>
+                                                                <p className="firstname">
+                                                                    {x?.content?.first_name?.replace(
+                                                                        /^./,
+                                                                        x?.content?.first_name?.charAt(0).toUpperCase()
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <p className="phone_num">
+                                                                    {x?.content?.phone_number}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="edit_delete_container">
+                                                    <div onClick={() => HandleEdit(x)}>
+                                                        <p className="firstname">
+                                                            {" "}
+                                                            <FiEdit />
+                                                        </p>
+                                                    </div>
+
+                                                    <div onClick={
+                                                        () => {
+                                                            return (
+                                                                handleDelete(x?.id)
+                                                                //  console.log
+                                                                // setDeleteContact(true),
+                                                                // stageOne(x.id)
+
+
+
+                                                            )
+                                                        }
+                                                    }>
+                                                        <p className="phone_num">
+                                                            {" "}
+                                                            <MdDeleteOutline />
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </>
+
+                                        }
+
+
+
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+            }
+        </div >
     );
 }
