@@ -1,0 +1,111 @@
+* {
+    /* margin: 0;
+    padding: 0; */
+}
+
+body {
+    background: rgb(243 244 246/var(1));
+    ;
+}
+
+
+.img_others {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    justify-content: space-between;
+    /* background: aliceblue; */
+    margin-bottom: 30px;
+    background: #def4f4;
+}
+
+
+.img_body>img {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    object-fit: cover;
+}
+
+
+.firstname,
+.phone_num {
+    font-weight: 500;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    --tw-text-opacity: 1;
+    color: rgb(15 23 42/var(--tw-text-opacity));
+    cursor: pointer;
+}
+
+.other_contents {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+
+}
+
+
+.App_ {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 70%;
+
+}
+
+
+.contactandform {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 100px;
+    padding: 30px;
+}
+
+
+.title_text {
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+    cursor: pointer;
+
+}
+
+
+.imganddetails {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.main_container {
+    background-color: rgb(243 244 246/var(1));
+}
+
+
+.search_input {
+    display: flex;
+}
+
+.search_input>.searchinput {
+    width: 100%;
+    padding: .7rem;
+}
+
+.search_input>.btn_ {
+    /* background: turquoise; */
+    background: #86dcdd;
+    border: 1px solid #86dcdd;
+}
+
+.search_input_btn {
+    margin-bottom: 50px;
+}
+
+.mdclear {
+    cursor: pointer;
+}
