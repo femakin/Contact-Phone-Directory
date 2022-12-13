@@ -26,23 +26,7 @@ export default function Home() {
 
 
 
-    const stageOne = (data) => {
-        console.log(data, 'dataaaa')
 
-        if (deletecontact) {
-            // alert('Confirm you want to delete')
-            Swal.fire({
-                title: "Delete!",
-                text: "Do you want to delete",
-                icon: "error",
-                confirmButtonText: "Cool",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    handleDelete(data)
-                }
-            })
-        }
-    }
 
 
     const handleDelete = (data) => {
@@ -71,19 +55,7 @@ export default function Home() {
             .catch((error) => console.log("error", error));
     };
 
-    // if (deletecontact) {
-    //     // alert('Confirm you want to delete')
-    //     Swal.fire({
-    //         title: "Delete!",
-    //         text: "Do you want to delete",
-    //         icon: "error",
-    //         confirmButtonText: "Cool",
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-    //             handleDelete()
-    //         }
-    //     })
-    // }
+
 
     const [refresh, setrefresh] = useState(false);
     const [afterclear, setafterclear] = useState(false)
@@ -116,7 +88,7 @@ export default function Home() {
 
 
     const FetchData = () => {
-        // setLoading(true);
+
 
         const Storyblok = new StoryblokClient({
             accessToken: "rGrunKNU32hha77QQKkdfgtt",
@@ -129,6 +101,7 @@ export default function Home() {
 
         Storyblok.get("cdn/stories", {
             version: "published",
+            "cv": 1670878752,
         })
             .then((response) => {
                 console.log(response?.data?.stories, "1");
@@ -143,8 +116,7 @@ export default function Home() {
 
 
     useEffect(() => {
-        // setDeleteContact(false)
-        // FetchData()
+
         setLoading(true);
         const timer = setTimeout(() => {
             FetchData()
@@ -155,7 +127,7 @@ export default function Home() {
 
     const handleNavigate = () => {
         navigate("/")
-        // getStories(stories2)
+
     }
 
     return (
@@ -211,9 +183,6 @@ export default function Home() {
                                 <div key={i} className="img_others">
 
                                     {
-                                        // loading ? <div style={{
-                                        //     textAlign: 'center'
-                                        // }} >Loading...</div> :
 
                                         <>
 
@@ -256,12 +225,6 @@ export default function Home() {
                                                     () => {
                                                         return (
                                                             handleDelete(x?.id)
-                                                            //  console.log
-                                                            // setDeleteContact(true),
-                                                            // stageOne(x.id)
-
-
-
                                                         )
                                                     }
                                                 }>
