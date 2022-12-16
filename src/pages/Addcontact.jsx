@@ -130,7 +130,7 @@ function Addcontact() {
                         redirect: 'follow'
                     };
 
-                    fetch(`https://mapi.storyblok.com/v1/spaces/187484/stories/`, requestOptions)
+                    fetch(`https://api.storyblok.com/v1/spaces/187484/stories/`, requestOptions)
                         .then((res) => {
                             res.json()
                             // console.log(res.json(), 'resss')
