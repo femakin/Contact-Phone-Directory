@@ -134,7 +134,7 @@ function EditPage() {
                         redirect: 'follow'
                     };
 
-                    fetch(`https://mapi.storyblok.com/v1/spaces/187484/stories/${parameters?.state?.id}`, requestOptions)
+                    fetch(`https://api.storyblok.com/v1/spaces/187484/stories/${parameters?.state?.id}`, requestOptions)
                         .then(response => response.json())
                         .then((result) => {
                             console.log(result, 'resultttt')

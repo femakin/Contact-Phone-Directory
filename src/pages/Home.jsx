@@ -30,6 +30,7 @@ export default function Home() {
 
 
     const handleDelete = (data) => {
+        setLoading(true);
         console.log(data, 'data')
         var myHeaders = new Headers();
         myHeaders.append(
@@ -44,11 +45,12 @@ export default function Home() {
         };
 
         fetch(
-            `https://mapi.storyblok.com/v1/spaces/187484/stories/${data}`,
+            `https://api.storyblok.com/v1/spaces/187484/stories/${data}`,
             requestOptions
         )
             .then((response) => response.json())
             .then((result) => {
+                setLoading(false);
                 console.log(result, "resulttttttt");
                 window.location.reload();
             })
@@ -88,6 +90,7 @@ export default function Home() {
 
 
     const FetchData = () => {
+        setLoading(true);
 
 
         const Storyblok = new StoryblokClient({
@@ -141,7 +144,7 @@ export default function Home() {
         setLoading(true);
         const timer = setTimeout(() => {
             FetchData()
-        }, 3000);
+        }, 100);
         return () => clearTimeout(timer);
     }, [deletecontact, afterclear]);
 
@@ -155,117 +158,117 @@ export default function Home() {
         <div className="main_body">
             {
 
-                // loading ? <div style={{
-                //     textAlign: 'center'
-                // }} >Loading...</div> :
-                <div className="main_">
-                    <div className="contactandform">
-                        <div>
-                            <h1 className="title_text" onClick={() => handleNavigate()}>
-                                All Contacts
-                            </h1>
-                        </div>
-
-                        <div>
-                            <h1
-                                className="title_text"
-                                onClick={() => navigate("/addcontact")}
-                            >
-                                Add Contact
-                            </h1>
-                        </div>
-                    </div>
-
-                    <div className="search_input_btn">
-                        <form onSubmit={handleSearchForm}>
-                            <div className="search_input">
-                                <input
-                                    required
-                                    className="searchinput"
-                                    value={searchquery}
-                                    onChange={(e) => setSearchqury(e.target.value)}
-                                    type="text"
-                                    placeholder="Search for contact..."
-                                />
-
-                                <input className="btn_" type="submit" value="Search" />
-
-                                <MdClear
-                                    onClick={() => handleClearSearch()}
-                                    className="mdclear"
-                                />
+                loading ? <div style={{
+                    textAlign: 'center'
+                }} >Loading...</div> :
+                    <div className="main_">
+                        <div className="contactandform">
+                            <div>
+                                <h1 className="title_text" onClick={() => handleNavigate()}>
+                                    All Contacts
+                                </h1>
                             </div>
-                        </form>
-                    </div>
 
-                    <div className="main_conatiner">
-                        {stories?.map((x, i) => {
-                            return (
-                                <div key={i} className="img_others">
+                            <div>
+                                <h1
+                                    className="title_text"
+                                    onClick={() => navigate("/addcontact")}
+                                >
+                                    Add Contact
+                                </h1>
+                            </div>
+                        </div>
 
-                                    {
+                        <div className="search_input_btn">
+                            <form onSubmit={handleSearchForm}>
+                                <div className="search_input">
+                                    <input
+                                        required
+                                        className="searchinput"
+                                        value={searchquery}
+                                        onChange={(e) => setSearchqury(e.target.value)}
+                                        type="text"
+                                        placeholder="Search for contact..."
+                                    />
 
-                                        <>
+                                    <input className="btn_" type="submit" value="Search" />
 
-                                            <div className="imganddetails">
-                                                <div className="img_body">
-                                                    {" "}
-                                                    <img
-                                                        src={x?.content?.imagetwo}
-                                                        alt={x?.content?.first_name}
-                                                    />{" "}
-                                                </div>
-                                                <div className="other_contents">
-                                                    <div>
+                                    <MdClear
+                                        onClick={() => handleClearSearch()}
+                                        className="mdclear"
+                                    />
+                                </div>
+                            </form>
+                        </div>
+
+                        <div className="main_conatiner">
+                            {stories?.map((x, i) => {
+                                return (
+                                    <div key={i} className="img_others">
+
+                                        {
+
+                                            <>
+
+                                                <div className="imganddetails">
+                                                    <div className="img_body">
+                                                        {" "}
+                                                        <img
+                                                            src={x?.content?.imagetwo}
+                                                            alt={x?.content?.first_name}
+                                                        />{" "}
+                                                    </div>
+                                                    <div className="other_contents">
                                                         <div>
-                                                            <p className="firstname">
-                                                                {x?.content?.first_name?.replace(
-                                                                    /^./,
-                                                                    x?.content?.first_name?.charAt(0).toUpperCase()
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <p className="phone_num">
-                                                                {x?.content?.phone_number}
-                                                            </p>
+                                                            <div>
+                                                                <p className="firstname">
+                                                                    {x?.content?.first_name?.replace(
+                                                                        /^./,
+                                                                        x?.content?.first_name?.charAt(0).toUpperCase()
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <p className="phone_num">
+                                                                    {x?.content?.phone_number}
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="edit_delete_container">
-                                                <div onClick={() => HandleEdit(x)}>
-                                                    <p className="firstname">
-                                                        {" "}
-                                                        <FiEdit />
-                                                    </p>
+                                                <div className="edit_delete_container">
+                                                    <div onClick={() => HandleEdit(x)}>
+                                                        <p className="firstname">
+                                                            {" "}
+                                                            <FiEdit />
+                                                        </p>
+                                                    </div>
+
+                                                    <div onClick={
+                                                        () => {
+                                                            return (
+                                                                handleDelete(x?.id)
+                                                            )
+                                                        }
+                                                    }>
+                                                        <p className="phone_num">
+                                                            {" "}
+                                                            <MdDeleteOutline />
+                                                        </p>
+                                                    </div>
                                                 </div>
+                                            </>
 
-                                                <div onClick={
-                                                    () => {
-                                                        return (
-                                                            handleDelete(x?.id)
-                                                        )
-                                                    }
-                                                }>
-                                                    <p className="phone_num">
-                                                        {" "}
-                                                        <MdDeleteOutline />
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </>
-
-                                    }
+                                        }
 
 
 
-                                </div>
-                            );
-                        })}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
             }
         </div >
     );
