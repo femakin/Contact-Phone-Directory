@@ -99,18 +99,39 @@ export default function Home() {
             },
         });
 
-        Storyblok.get("cdn/stories", {
-            version: "published",
-            "cv": 1670878752,
-        })
+        // Storyblok.get("cdn/stories", {
+        //     version: "published",
+        //     "cv": 1670878752,
+        // })
+        // .then((response) => {
+        //     console.log(response?.data?.stories, "1");
+        //     getStories(response?.data?.stories);
+        //     setLoading(false);
+        // })
+        // .catch((error) => {
+        //     console.log(error);
+        // });
+
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch("https://api.storyblok.com/v2/cdn/stories?version=published&cv=1670878752&token=rGrunKNU32hha77QQKkdfgtt", requestOptions)
+            .then(response => response.json())
             .then((response) => {
-                console.log(response?.data?.stories, "1");
-                getStories(response?.data?.stories);
+                // console.log(response?.data?.stories, "1");
+                console.log(response, 'response')
+                getStories(response?.stories);
                 setLoading(false);
             })
             .catch((error) => {
                 console.log(error);
             });
+
+
+
+
     }
 
 
