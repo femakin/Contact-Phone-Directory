@@ -59,3 +59,14 @@ input[type=file]::file-selector-button {
     /* padding: .6rem; */
     border: 1px solid #00B3B0;
 }
+
+
+.img-file {
+    cursor: pointer;
+    background: #00B3B0;
+    color: #ffffff;
+    border: 1px solid #00B3B0;
+    outline: none;
+    padding: 10px;
+    margin-bottom: 20px;
+}

@@ -34,119 +34,246 @@ function Addcontact() {
         },
     });
 
+
+    const UploadImage = () => {
+        console.log('call image')
+        window.cloudinary
+            .openUploadWidget(
+                { cloud_name: "femakin", upload_preset: "ml_default" },
+                (error, result) => {
+                    if (!error && result && result.event === "success") {
+                        console.log(result)
+                        setImageUrl(result);
+                    }
+                }
+            )
+            .open();
+    };
+
+
+
+
+
     const handleSubmit = (e) => {
-        setloading(true)
-        const file = fileInput.current.files[0];
         e.preventDefault();
-        // console.log(
-        //     firstName,
-        //     "firstname",
-        //     lastName,
-        //     phoneNumber,
-        //     location,
-        //     email,
-        //     imageUrl,
-        //     imageUrl,
-        //     file
-        // );
 
-        const fileName = generateRandom(4);
-        var formdata = new FormData();
-        formdata.append("file", file, "[PROXY]");
-        formdata.append("upload_preset", "ml_default");
-        formdata.append("public_id", `${fileName}`);
-        formdata.append("api_key", `${process.env.REACT_APP_CLOUDINARY_API_KEY}`);
 
-        var requestOptions = {
-            method: "POST",
-            body: formdata,
-            redirect: "follow",
-        };
+        if (imageUrl?.info?.id === " " || imageUrl === undefined) {
+            alert('Please upload your image')
+        } else {
+            console.log(imageUrl, 'imageUrl')
+            setloading(true)
+            // const file = fileInput.current.files[0];
+            e.preventDefault();
 
-        fetch("https://api.cloudinary.com/v1_1/femakin/auto/upload", requestOptions)
-            .then(async (response) => {
-                return await response.json();
-            })
-            .then(async (result) => {
-                // const UserDetails = JSON.parse(localStorage?.getItem('user_id'))
+            // const fileName = generateRandom(4);
+            var formdata = new FormData();
+            // formdata.append("file", file, "[PROXY]");
+            // formdata.append("upload_preset", "ml_default");
+            // formdata.append("public_id", `${fileName}`);
+            formdata.append("api_key", `${process.env.REACT_APP_CLOUDINARY_API_KEY}`);
 
-                // console.log(result, "resultttt");
+            var requestOptions = {
+                method: "POST",
+                body: formdata,
+                redirect: "follow",
+            };
 
-                if (result?.secure_url !== " ") {
-                    setloading(false)
-                    const spaceId = "187484";
-                    const accessToken = "rGrunKNU32hha77QQKkdfgtt";
 
-                    // Create a new instance of the StoryblokClient
-                    const client = new StoryblokClient({ spaceId, accessToken });
+            fetch("https://api.cloudinary.com/v1_1/femakin/auto/upload", requestOptions)
+                .then(async (response) => {
+                    return await response.json();
+                })
+                .then(async (result) => {
+                    // const UserDetails = JSON.parse(localStorage?.getItem('user_id'))
 
-                    // Define the data for the new story
-                    const data = {
-                        story: {
-                            name: "My New Story",
-                            slug: "my-new-story",
-                            content: {
-                                imagetwo: "",
-                                location: location,
-                                component: "ContactForm",
-                                image_one: "",
-                                last_name: lastName,
-                                first_name: fileName,
-                                phone_number: phoneNumber,
-                                email_address: email,
+                    // console.log(result, "resultttt");
+
+                    if (result?.secure_url !== " ") {
+                        setloading(false)
+                        const spaceId = "187484";
+                        const accessToken = "rGrunKNU32hha77QQKkdfgtt";
+
+                        // Create a new instance of the StoryblokClient
+                        const client = new StoryblokClient({ spaceId, accessToken });
+
+                        // Define the data for the new story
+                        // const data = {
+                        //     story: {
+                        //         name: "My New Story",
+                        //         slug: "my-new-story",
+                        //         content: {
+                        //             imagetwo: "",
+                        //             location: location,
+                        //             component: "ContactForm",
+                        //             image_one: "",
+                        //             last_name: lastName,
+                        //             first_name: fileName,
+                        //             phone_number: phoneNumber,
+                        //             email_address: email,
+                        //         },
+                        //     },
+                        // };
+
+
+                        var myHeaders = new Headers();
+                        myHeaders.append("Authorization", process.env.REACT_APP_AUTH_TOKEN);
+                        myHeaders.append("Accept", "application/json");
+                        myHeaders.append("Content-Type", "application/json");
+
+                        var raw = JSON.stringify({
+                            "story": {
+                                "name": imageUrl?.info?.id,
+                                "slug": imageUrl?.info?.id,
+                                "content": {
+                                    "imagetwo": result?.secure_url,
+                                    "location": location,
+                                    "component": "ContactForm",
+                                    "image_one": imageUrl,
+                                    "last_name": lastName?.toLowerCase(),
+                                    "first_name": firstName?.toLowerCase(),
+                                    "phone_number": phoneNumber,
+                                    "email_address": email,
+                                    "body": []
+                                }
                             },
-                        },
-                    };
-
-
-                    var myHeaders = new Headers();
-                    myHeaders.append("Authorization", "Xh2EhgBpDto1tHct8qGEDAtt-139200-CCGF4UwNMnQ9x3pDk7NJ");
-                    myHeaders.append("Accept", "application/json");
-                    myHeaders.append("Content-Type", "application/json");
-
-                    var raw = JSON.stringify({
-                        "story": {
-                            "name": fileName,
-                            "slug": fileName,
-                            "content": {
-                                "imagetwo": result?.secure_url,
-                                "location": location,
-                                "component": "ContactForm",
-                                "image_one": result?.secure_url,
-                                "last_name": lastName.toLowerCase(),
-                                "first_name": firstName.toLowerCase(),
-                                "phone_number": phoneNumber,
-                                "email_address": email,
-                                "body": []
-                            }
-                        },
-                        "publish": 1
-                    });
-
-                    var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: raw,
-                        redirect: 'follow'
-                    };
-
-                    fetch(`https://api.storyblok.com/v1/spaces/187484/stories/`, requestOptions)
-                        .then((res) => {
-                            res.json()
-                            // console.log(res.json(), 'resss')
-                        }).then((res) => {
-                            console.log(res, 'res')
-                            navigate('/')
-                        }).catch((err) => {
-                            console.log(err)
+                            "publish": 1
                         });
 
+                        var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: 'follow'
+                        };
 
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                        fetch(`https://api.storyblok.com/v1/spaces/187484/stories/`, requestOptions)
+                            .then((res) => {
+                                res.json()
+                                // console.log(res.json(), 'resss')
+                            }).then((res) => {
+                                console.log(res, 'res')
+                                navigate('/')
+                            }).catch((err) => {
+                                console.log(err)
+                            });
+
+
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+
+
+
+        // if (imageUrl === "") {
+        //     alert('Please upload your image')
+        // } else {
+        // setloading(true)
+        // // const file = fileInput.current.files[0];
+        // e.preventDefault();
+
+        // // const fileName = generateRandom(4);
+        // var formdata = new FormData();
+        // // formdata.append("file", file, "[PROXY]");
+        // // formdata.append("upload_preset", "ml_default");
+        // // formdata.append("public_id", `${fileName}`);
+        // formdata.append("api_key", `${process.env.REACT_APP_CLOUDINARY_API_KEY}`);
+
+        // var requestOptions = {
+        //     method: "POST",
+        //     body: formdata,
+        //     redirect: "follow",
+        // };
+
+
+        // fetch("https://api.cloudinary.com/v1_1/femakin/auto/upload", requestOptions)
+        //     .then(async (response) => {
+        //         return await response.json();
+        //     })
+        //     .then(async (result) => {
+        //         // const UserDetails = JSON.parse(localStorage?.getItem('user_id'))
+
+        //         // console.log(result, "resultttt");
+
+        //         if (result?.secure_url !== " ") {
+        //             setloading(false)
+        //             const spaceId = "187484";
+        //             const accessToken = "rGrunKNU32hha77QQKkdfgtt";
+
+        //             // Create a new instance of the StoryblokClient
+        //             const client = new StoryblokClient({ spaceId, accessToken });
+
+        //             // Define the data for the new story
+        //             // const data = {
+        //             //     story: {
+        //             //         name: "My New Story",
+        //             //         slug: "my-new-story",
+        //             //         content: {
+        //             //             imagetwo: "",
+        //             //             location: location,
+        //             //             component: "ContactForm",
+        //             //             image_one: "",
+        //             //             last_name: lastName,
+        //             //             first_name: fileName,
+        //             //             phone_number: phoneNumber,
+        //             //             email_address: email,
+        //             //         },
+        //             //     },
+        //             // };
+
+
+        //             var myHeaders = new Headers();
+        //             myHeaders.append("Authorization", process.env.REACT_APP_AUTH_TOKEN);
+        //             myHeaders.append("Accept", "application/json");
+        //             myHeaders.append("Content-Type", "application/json");
+
+        //             var raw = JSON.stringify({
+        //                 "story": {
+        //                     "name": fileName,
+        //                     "slug": fileName,
+        //                     "content": {
+        //                         "imagetwo": result?.secure_url,
+        //                         "location": location,
+        //                         "component": "ContactForm",
+        //                         "image_one": imageUrl,
+        //                         "last_name": lastName.toLowerCase(),
+        //                         "first_name": firstName.toLowerCase(),
+        //                         "phone_number": phoneNumber,
+        //                         "email_address": email,
+        //                         "body": []
+        //                     }
+        //                 },
+        //                 "publish": 1
+        //             });
+
+        //             var requestOptions = {
+        //                 method: 'POST',
+        //                 headers: myHeaders,
+        //                 body: raw,
+        //                 redirect: 'follow'
+        //             };
+
+        //             fetch(`https://api.storyblok.com/v1/spaces/187484/stories/`, requestOptions)
+        //                 .then((res) => {
+        //                     res.json()
+        //                     // console.log(res.json(), 'resss')
+        //                 }).then((res) => {
+        //                     console.log(res, 'res')
+        //                     navigate('/')
+        //                 }).catch((err) => {
+        //                     console.log(err)
+        //                 });
+
+
+        //         }
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
+        // }
     };
 
     // useEffect(() => {
@@ -171,6 +298,14 @@ function Addcontact() {
                 </div>
 
                 <div className="form_container">
+
+                    <div className="form_first_name_label">
+                        <label htmlFor="img">Upload Image</label>
+                        {/* <input type="file" id="img" name="img" accept="image/*" required value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} /> */}
+                        {/* <input type="file" required id="img" accept="image/*" ref={fileInput} /> */}
+                        <button onClick={UploadImage} className='img-file' >Choose file</button>
+                    </div>
+
                     <form onSubmit={handleSubmit}>
                         <div className="form_body">
                             <div className="form_first_name_label">
@@ -228,11 +363,7 @@ function Addcontact() {
                                 />
                             </div>
 
-                            <div className="form_first_name_label">
-                                <label htmlFor="img">Upload Image</label>
-                                {/* <input type="file" id="img" name="img" accept="image/*" required value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} /> */}
-                                <input type="file" required id="img" accept="image/*" ref={fileInput} />
-                            </div>
+
 
                             <div className="submit_container">
                                 <div className="submit_btn">
@@ -242,6 +373,8 @@ function Addcontact() {
                             </div>
                         </div>
                     </form>
+
+
                 </div>
             </div>
         </div>
