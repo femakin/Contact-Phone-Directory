@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Contact.css";
-
 
 function Addcontact() {
     const navigate = useNavigate();
@@ -16,27 +15,12 @@ function Addcontact() {
 
 
 
-
-    useEffect(() => {
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-        };
-
-        fetch("https://api.storyblok.com/v2/cdn/stories?token=rGrunKNU32hha77QQKkdfgtt", requestOptions)
-            .then(response => response.json())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error));
-    }, []);
-
-
     const UploadImage = () => {
         window?.cloudinary
             .openUploadWidget(
                 { cloud_name: "femakin", upload_preset: "ml_default" },
                 (error, result) => {
                     if (!error && result && result.event === "success") {
-                        console.log(result)
                         setImageUrl(result);
                     }
                 }
@@ -44,64 +28,60 @@ function Addcontact() {
             .open();
     };
 
-
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
-
         if (imageUrl?.info?.id === " " || imageUrl === undefined) {
-            alert('Please upload your image')
+            alert("Please upload your image");
         } else {
-            console.log(imageUrl, 'imageUrl')
-            setloading(true)
+            setloading(true);
             e.preventDefault();
-
 
             var myHeaders = new Headers();
             myHeaders.append("Authorization", `${process.env.REACT_APP_AUTH_TOKEN}`);
             myHeaders.append("Content-Type", "application/json");
 
             var raw = JSON.stringify({
-                "story": {
-                    "name": imageUrl?.info?.id,
-                    "slug": imageUrl?.info?.id,
-                    "content": {
-                        "imagetwo": imageUrl?.info?.secure_url,
-                        "location": location,
-                        "component": "ContactForm",
-                        "image_one": imageUrl,
-                        "last_name": lastName?.toLowerCase(),
-                        "first_name": firstName?.toLowerCase(),
-                        "phone_number": phoneNumber,
-                        "email_address": email,
-                        "body": []
-                    }
+                story: {
+                    name: imageUrl?.info?.id,
+                    slug: imageUrl?.info?.id,
+                    content: {
+                        imagetwo: imageUrl?.info?.secure_url,
+                        location: location,
+                        component: "ContactForm",
+                        image_one: imageUrl,
+                        last_name: lastName?.toLowerCase(),
+                        first_name: firstName?.toLowerCase(),
+                        phone_number: phoneNumber,
+                        email_address: email,
+                        body: [],
+                    },
                 },
-                "publish": 1
+                publish: 1,
             });
 
             var requestOptions = {
-                method: 'POST',
+                method: "POST",
                 headers: myHeaders,
                 body: raw,
-                redirect: 'follow'
+                redirect: "follow",
             };
 
-            fetch(`https://api.storyblok.com/v1/spaces/187484/stories/`, requestOptions)
+            fetch(
+                `https://api.storyblok.com/v1/spaces/187484/stories/`,
+                requestOptions
+            )
                 .then((res) => {
-                    res.json()
-                }).then((res) => {
-                    console.log(res, 'res')
-                    navigate('/')
-                }).catch((err) => {
-                    console.log(err)
+                    res.json();
+                })
+                .then((res) => {
+                    navigate("/");
+                })
+                .catch((err) => {
+                    console.log(err);
                 });
         }
-    }
-
-
-
+    };
 
     return (
         <div>
@@ -121,10 +101,11 @@ function Addcontact() {
                 </div>
 
                 <div className="form_container">
-
                     <div className="form_first_name_label">
                         <label htmlFor="img">Upload Image</label>
-                        <button onClick={UploadImage} className='img-file' >Choose file</button>
+                        <button onClick={UploadImage} className="img-file">
+                            Choose file
+                        </button>
                     </div>
 
                     <form onSubmit={handleSubmit}>
@@ -186,13 +167,15 @@ function Addcontact() {
 
                             <div className="submit_container">
                                 <div className="submit_btn">
-                                    <input className="btn_" type="submit" value={`${loading ? 'loading...' : 'Submit'}`} />
+                                    <input
+                                        className="btn_"
+                                        type="submit"
+                                        value={`${loading ? "loading..." : "Submit"}`}
+                                    />
                                 </div>
                             </div>
                         </div>
                     </form>
-
-
                 </div>
             </div>
         </div>
