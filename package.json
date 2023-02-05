@@ -15,7 +15,7 @@
     "react-icons": "^4.7.1",
     "react-router-dom": "^6.4.5",
     "react-scripts": "5.0.1",
-    "storyblok-js-client": "^5.1.5",
+    "storyblok-js-client": "^5.3.6",
     "sweetalert2": "^11.6.15",
     "web-vitals": "^2.1.4"
   },
