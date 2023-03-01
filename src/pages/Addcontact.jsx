@@ -1,4 +1,4 @@
-import React, { useState, } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Contact.css";
 
@@ -12,8 +12,7 @@ function Addcontact() {
     const [email, setEmail] = useState("");
     const [imageUrl, setImageUrl] = useState();
     const [loading, setloading] = useState(false);
-
-
+    const StoryblokClient = require('storyblok-js-client')
 
     const UploadImage = () => {
         window?.cloudinary
@@ -37,11 +36,12 @@ function Addcontact() {
             setloading(true);
             e.preventDefault();
 
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", `${process.env.REACT_APP_AUTH_TOKEN}`);
-            myHeaders.append("Content-Type", "application/json");
+            const Storyblok = new StoryblokClient({
+                oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
+            })
 
-            var raw = JSON.stringify({
+
+            Storyblok.post(`spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/`, {
                 story: {
                     name: imageUrl?.info?.id,
                     slug: imageUrl?.info?.id,
@@ -57,29 +57,16 @@ function Addcontact() {
                         body: [],
                     },
                 },
-                publish: 1,
-            });
+                "publish": 1
+            }).then(response => {
 
-            var requestOptions = {
-                method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow",
-            };
+                if (response?.status === 201) {
+                    navigate("/")
+                }
+            }).catch(error => {
+                console.log(error)
+            })
 
-            fetch(
-                `https://api.storyblok.com/v1/spaces/187484/stories/`,
-                requestOptions
-            )
-                .then((res) => {
-                    res.json();
-                })
-                .then((res) => {
-                    navigate("/");
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
         }
     };
 

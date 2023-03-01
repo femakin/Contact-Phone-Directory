@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import { MdClear } from "react-icons/md";
+import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -12,17 +13,35 @@ export default function Home() {
     const [stories2, getStories2] = useState();
     const [searchquery, setSearchqury] = useState("");
     const [loading, setLoading] = useState(false);
-    const [deletecontact] = useState(false);
     const [refresh, setrefresh] = useState(false);
     const [afterclear, setafterclear] = useState(false);
+    const StoryblokClient = require("storyblok-js-client");
+    const Storyblok = new StoryblokClient({
+        oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
+    });
+
+    const FetchData = async () => {
+        setLoading(true);
+        storyblokInit({
+            accessToken: `${process.env.REACT_APP_STORYBLOK_ACCESS_TOKEN}`,
+            use: [apiPlugin],
+        });
+
+        const storyblokApi = getStoryblokApi();
+        const { data } = await storyblokApi.get("cdn/stories", {
+            version: "published",
+        });
+        getStories(data?.stories);
+        setLoading(false);
+    };
 
     useEffect(() => {
         setLoading(true);
         const timer = setTimeout(() => {
             FetchData();
-        }, 100);
+        }, 500);
         return () => clearTimeout(timer);
-    }, [deletecontact, afterclear]);
+    }, [afterclear]);
 
     const handleNavigate = () => {
         navigate("/");
@@ -36,25 +55,16 @@ export default function Home() {
 
     const handleDelete = (data) => {
         setLoading(true);
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", `${process.env.REACT_APP_AUTH_TOKEN}`);
-
-        var requestOptions = {
-            method: "DELETE",
-            headers: myHeaders,
-            redirect: "follow",
-        };
-
-        fetch(
-            `https://api.storyblok.com/v1/spaces/187484/stories/${data}`,
-            requestOptions
+        Storyblok.delete(
+            `spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/${data}`
         )
-            .then((response) => response.json())
-            .then((result) => {
+            .then((response) => {
                 setLoading(false);
                 window.location.reload();
             })
-            .catch((error) => console.log("error", error));
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     const handleSearchForm = (e) => {
@@ -76,28 +86,6 @@ export default function Home() {
         getStories(stories2);
         setSearchqury("");
         setafterclear(true);
-    };
-
-    const FetchData = () => {
-        setLoading(true);
-
-        var requestOptions = {
-            method: "GET",
-            redirect: "follow",
-        };
-
-        fetch(
-            `https://api.storyblok.com/v2/cdn/stories/?token=${process.env.REACT_APP_ACCESS_TOKEN}`,
-            requestOptions
-        )
-            .then((response) => response.json())
-            .then((response) => {
-                getStories(response?.stories);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
     };
 
     return (

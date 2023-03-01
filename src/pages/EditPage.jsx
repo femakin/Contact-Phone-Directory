@@ -13,6 +13,7 @@ function EditPage() {
     const [imageUrl, setImageUrl] = useState();
     const [loading, setloading] = useState(false);
     const parameters = useLocation();
+    const StoryblokClient = require('storyblok-js-client')
 
     const handleSubmit = (e) => {
         setloading(true);
@@ -23,11 +24,12 @@ function EditPage() {
         } else {
             setloading(true);
             e.preventDefault();
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", `${process.env.REACT_APP_AUTH_TOKEN}`);
-            myHeaders.append("Content-Type", "application/json");
 
-            var raw = JSON.stringify({
+            const Storyblok = new StoryblokClient({
+                oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
+            })
+
+            Storyblok.put(`spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/${parameters?.state?.id}`, {
                 story: {
                     name: imageUrl?.info?.id,
                     slug: imageUrl?.info?.id,
@@ -43,25 +45,13 @@ function EditPage() {
                         body: [],
                     },
                 },
-                publish: 1,
-            });
+                "publish": 1
+            }).then(response => {
+                navigate("/");
+            }).catch(error => {
+                console.log(error)
+            })
 
-            var requestOptions = {
-                method: "PUT",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow",
-            };
-
-            fetch(
-                `https://api.storyblok.com/v1/spaces/187484/stories/${parameters?.state?.id}`,
-                requestOptions
-            )
-                .then((response) => response.json())
-                .then((result) => {
-                    navigate("/");
-                })
-                .catch((error) => console.log("error", error));
         }
     };
 
@@ -106,7 +96,6 @@ function EditPage() {
                             All Contacts
                         </h1>
                     </div>
-
                     <div>
                         <h1 className="title_text" onClick={() => navigate("/addcontact")}>
                             Add Contact

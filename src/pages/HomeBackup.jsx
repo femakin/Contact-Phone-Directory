@@ -59,7 +59,7 @@ export default function Home() {
         };
 
         fetch(
-            `https://mapi.storyblok.com/v1/spaces/187484/stories/${data}`,
+            `https://mapi.storyblok.com/v1/spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/${data}`,
             requestOptions
         )
             .then((response) => response.json())
