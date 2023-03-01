@@ -8,6 +8,12 @@ import { MdClear } from "react-icons/md";
 import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
 
 export default function Home() {
+
+    const StoryblokClient = require("storyblok-js-client");
+    const Storyblok = new StoryblokClient({
+        oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
+    });
+
     const navigate = useNavigate();
     const [stories, getStories] = useState();
     const [stories2, getStories2] = useState();
@@ -15,10 +21,7 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [refresh, setrefresh] = useState(false);
     const [afterclear, setafterclear] = useState(false);
-    const StoryblokClient = require("storyblok-js-client");
-    const Storyblok = new StoryblokClient({
-        oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
-    });
+
 
     const FetchData = async () => {
         setLoading(true);

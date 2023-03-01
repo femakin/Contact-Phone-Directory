@@ -12,7 +12,11 @@ function Addcontact() {
     const [email, setEmail] = useState("");
     const [imageUrl, setImageUrl] = useState();
     const [loading, setloading] = useState(false);
-    const StoryblokClient = require('storyblok-js-client')
+    const StoryblokClient = require("storyblok-js-client");
+
+    const Storyblok = new StoryblokClient({
+        oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
+    });
 
     const UploadImage = () => {
         window?.cloudinary
@@ -36,37 +40,35 @@ function Addcontact() {
             setloading(true);
             e.preventDefault();
 
-            const Storyblok = new StoryblokClient({
-                oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
-            })
-
-
-            Storyblok.post(`spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/`, {
-                story: {
-                    name: imageUrl?.info?.id,
-                    slug: imageUrl?.info?.id,
-                    content: {
-                        imagetwo: imageUrl?.info?.secure_url,
-                        location: location,
-                        component: "ContactForm",
-                        image_one: imageUrl,
-                        last_name: lastName?.toLowerCase(),
-                        first_name: firstName?.toLowerCase(),
-                        phone_number: phoneNumber,
-                        email_address: email,
-                        body: [],
+            Storyblok.post(
+                `spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/`,
+                {
+                    story: {
+                        name: imageUrl?.info?.id,
+                        slug: imageUrl?.info?.id,
+                        content: {
+                            imagetwo: imageUrl?.info?.secure_url,
+                            location: location,
+                            component: "ContactForm",
+                            image_one: imageUrl,
+                            last_name: lastName?.toLowerCase(),
+                            first_name: firstName?.toLowerCase(),
+                            phone_number: phoneNumber,
+                            email_address: email,
+                            body: [],
+                        },
                     },
-                },
-                "publish": 1
-            }).then(response => {
-
-                if (response?.status === 201) {
-                    navigate("/")
+                    publish: 1,
                 }
-            }).catch(error => {
-                console.log(error)
-            })
-
+            )
+                .then((response) => {
+                    if (response?.status === 201) {
+                        navigate("/");
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         }
     };
 

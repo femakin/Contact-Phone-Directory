@@ -14,6 +14,9 @@ function EditPage() {
     const [loading, setloading] = useState(false);
     const parameters = useLocation();
     const StoryblokClient = require('storyblok-js-client')
+    const Storyblok = new StoryblokClient({
+        oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
+    })
 
     const handleSubmit = (e) => {
         setloading(true);
@@ -25,9 +28,7 @@ function EditPage() {
             setloading(true);
             e.preventDefault();
 
-            const Storyblok = new StoryblokClient({
-                oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
-            })
+
 
             Storyblok.put(`spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/${parameters?.state?.id}`, {
                 story: {
@@ -47,7 +48,9 @@ function EditPage() {
                 },
                 "publish": 1
             }).then(response => {
-                navigate("/");
+                if (response?.status === 201) {
+                    navigate("/");
+                }
             }).catch(error => {
                 console.log(error)
             })
