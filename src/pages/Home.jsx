@@ -6,10 +6,12 @@ import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import { MdClear } from "react-icons/md";
 import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
+import StoryblokClient from "storyblok-js-client";
+
 
 export default function Home() {
 
-    const StoryblokClient = require("storyblok-js-client");
+
     const Storyblok = new StoryblokClient({
         oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
     });

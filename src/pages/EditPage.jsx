@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/Contact.css";
+import StoryblokClient from "storyblok-js-client";
 
 function EditPage() {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ function EditPage() {
     const [imageUrl, setImageUrl] = useState();
     const [loading, setloading] = useState(false);
     const parameters = useLocation();
-    const StoryblokClient = require('storyblok-js-client')
+
     const Storyblok = new StoryblokClient({
         oauthToken: `${process.env.REACT_APP_STORYBLOK_AUTH_TOKEN}`,
     })
