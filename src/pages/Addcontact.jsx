@@ -40,13 +40,13 @@ function Addcontact() {
         } else {
             setloading(true);
             e.preventDefault();
-
+            console.log(imageUrl)
             Storyblok.post(
                 `spaces/${process.env.REACT_APP_STORYBLOCK_SPACE_ID}/stories/`,
                 {
                     story: {
                         name: imageUrl?.info?.id,
-                        slug: imageUrl?.info?.id,
+                        slug: imageUrl?.info?.id + imageUrl?.info?.id,
                         content: {
                             imagetwo: imageUrl?.info?.secure_url,
                             location: location,
